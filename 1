@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>練習テスト（17問）</title>
+<style>
+  :root{--bg:#f5f6f8;--card:#fff;--primary:#0b66ff;--ok:#0b9b3a;--bad:#e03b3b;--muted:#666}
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,"Hiragino Kaku Gothic ProN",Meiryo,Arial; background:var(--bg); margin:0;padding:18px; color:#111}
+  header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  h1{font-size:18px;margin:0}
+  .meta{font-size:13px;color:var(--muted)}
+  .wrap{max-width:880px;margin:0 auto}
+  .card{background:var(--card);border-radius:12px;padding:12px 14px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+  .q-title{font-weight:600;margin:0 0 8px 0;font-size:15px}
+  label.option{display:block;padding:8px 10px;border-radius:8px;margin:6px 0;cursor:pointer;border:1px solid #eee;background:#fbfbfd}
+  input[type="radio"]{margin-right:10px}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+  button{background:var(--primary);color:#fff;border:none;padding:10px 14px;border-radius:8px;font-weight:600;cursor:pointer}
+  button.secondary{background:#fff;color:var(--primary);border:1px solid var(--primary)}
+  .result{font-weight:700;margin-top:10px}
+  .explain{margin-top:8px;padding:8px;border-left:4px solid #ddd;background:#fbfbfd;border-radius:6px;display:none}
+  .explain.show{display:block}
+  .ok{border-color:var(--ok);background:rgba(11,155,58,0.06)}
+  .bad{border-color:var(--bad);background:rgba(224,59,59,0.06)}
+  @media (max-width:420px){
+    body{padding:12px}
+    .q-title{font-size:14px}
+    button{width:48%}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>建設 練習テスト — 17問</h1>
+      <div class="meta">モバイル対応 • 解答後に採点＆解説表示 • その場で再挑戦可</div>
+    </div>
+  </header>
+
+  <form id="quizForm">
+    <!-- QUESTIONS INJECTED BY JS -->
+  </form>
+
+  <div class="controls">
+    <button id="submitBtn" type="button">Nộp bài / 採点</button>
+    <button id="resetBtn" type="button" class="secondary">Làm lại / 再挑戦</button>
+    <button id="toggleAnsBtn" type="button" class="secondary">Hiện đáp án / 答えを表示</button>
+  </div>
+
+  <div class="card" id="scoreCard" style="display:none">
+    <div id="scoreText" class="result"></div>
+  </div>
+</div>
+
+<script>
+/* ====== DATA: 17 câu (bạn có thể chỉnh sau) ====== */
+const QUESTIONS = [
+  { q: "問1. スプリンクラーは、なんの工事か",
+    opts:["海洋土木工事","通信工事","土木工事","消防設備工事"],
+    correct:3,
+    explain:"スプリンクラーは火災時に水を散布する設備で、消防設備工事に分類されます。"
+  },
+  { q: "問2. 建物の中から外に通じる通信回線を管理・接続するための配線盤を何というか",
+    opts:["分電盤","MDF","PBX","分配器"],
+    correct:1,
+    explain:"MDF（Main Distribution Frame）は建物の通信回線を接続する配線盤です。"
+  },
+  { q: "問3. 給排水衛生設備工事について、適切なものを選べ",
+    opts:["給湯設備工事","地熱井工事","塗装工事","舗装工事"],
+    correct:0,
+    explain:"給排水衛生設備工事には給湯設備工事など水回り設備が含まれます。"
+  },
+  { q: "問4. 内外装仕上げ工事に含まれないものはどれか",
+    opts:["ガス","屋根","カーテンウォール","防水"],
+    correct:0,
+    explain:"ガス設備工事は仕上げ工事ではなく、設備工事に分類されます。"
+  },
+  { q: "問5. 工程表から4つの情報が読み取れる工程表はどれか",
+    opts:["ガントチャート","バーチャート","グラフ式工程表","ネットワーク式工程表"],
+    correct:3,
+    explain:"ネットワーク式工程表は作業手順・日数・進行度・重要作業（クリティカルパス）が分かります。"
+  },
+  { q: "問7. 「おつかれさまです」はどんな時に挨拶するか",
+    opts:["他の人は大変そうだと見える時","仕事が終わるとき","休憩の時","すべて正解です"],
+    correct:3,
+    explain:"「おつかれさまです」は業務の合間や終了時、休憩時など幅広く使えます。"
+  },
+  { q: "問8. 作業終了後、火を使う場合は何をする？",
+    opts:["確実に消火を確認する","放置する","ゴミを確認する","上司に連絡する"],
+    correct:0,
+    explain:"火気を使ったら、必ず確実に消火が行われたことを確認します。"
+  },
+  { q: "問9. 服装の注意について、正しいものを選べ",
+    opts:["上着のボタンをはずす","ポケットに手を入れたまま作業する","半袖や半パンで作業する","そでは手首までおろして着用する"],
+    correct:3,
+    explain:"安全のため、袖は手首まで下ろして着用します。"
+  },
+  { q: "問10. 漏電の定義について正しいものを選べ",
+    opts:["電気が通るべきではない部分に電気が流れてしまうこと","大地を電気的に接続すること","雷による電流を放流すること","人体に電流が流れること"],
+    correct:0,
+    explain:"漏電とは絶縁破壊などで本来流れるべきでない経路に電流が流れる状態です。"
+  },
+  { q: "問11. ヒヤリ・ハット活動について、不適切なものを選べ",
+    opts:["経験を共有して安全性を高める","報告者の責任を追及し反省を促す","報告内容を分析して改善点を導く","原因を特定し改善策を提案する"],
+    correct:1,
+    explain:"ヒヤリ・ハット活動は責任追及ではなく、共有と改善で再発防止を図ります。"
+  },
+  { q: "問12. 木造住宅の工事をする人は何というか",
+    opts:["大工","住宅工事","石工事","電気工事"],
+    correct:0,
+    explain:"木造住宅をつくる職人は「大工」です。"
+  },
+  { q: "問15. 鉄骨で作られる構造について、違うものを選べ",
+    opts:["トラス構造","ラーメン構造","ネジ構造","ブレース構造"],
+    correct:2,
+    explain:"「ネジ構造」は一般的な構造形式ではありません（選択肢の中で不適切）。"
+  },
+  { q: "問16. 「盛り土・締め固め」は何か",
+    opts:["ブルドーザなどの機械を使って土砂を押して運ぶ","トラクターに積み込む","油圧ショベルを使って掘削する","平地はブルドーザを使って盛り土・締固めを行う"],
+    correct:3,
+    explain:"盛り土と締固めはブルドーザ等で行い、締固めにより地盤密度を確保します。"
+  },
+  { q: "問17. 相手の仕事や苦労に感謝して労う言葉はどれか",
+    opts:["失礼します","ご安全に","おつかれさまです","おはようございます"],
+    correct:2,
+    explain:"ねぎらいの言葉は「おつかれさまです」です。"
+  },
+  { q: "問18. 発破を行う業務に就くには何が必要か",
+    opts:["発破技師免許","特定技能資格","職長免許","JPT資格"],
+    correct:0,
+    explain:"発破作業は資格が必要で、発破技師免許が該当します。"
+  },
+  { q: "問20. コンクリートに振動を与えて空気を抜く機械は何というか",
+    opts:["掘削機械","バイブレーター","ローラ","こて"],
+    correct:1,
+    explain:"内部の気泡を除去するためにバイブレーターを使用します。"
+  }
+];
+
+/* ====== RENDER QUESTIONS ====== */
+const form = document.getElementById('quizForm');
+
+QUESTIONS.forEach((item, idx) => {
+  const wrap = document.createElement('div');
+  wrap.className = 'card';
+  const qtitle = document.createElement('p');
+  qtitle.className = 'q-title';
+  qtitle.textContent = `${idx+1}. ${item.q}`;
+  wrap.appendChild(qtitle);
+
+  item.opts.forEach((opt, j) => {
+    const label = document.createElement('label');
+    label.className = 'option';
+    label.innerHTML = `<input type="radio" name="q${idx}" value="${j}"> ${String.fromCharCode(65+j)}. ${opt}`;
+    wrap.appendChild(label);
+  });
+
+  const expl = document.createElement('div');
+  expl.className = 'explain';
+  expl.id = `exp${idx}`;
+  expl.textContent = item.explain;
+  wrap.appendChild(expl);
+
+  form.appendChild(wrap);
+});
+
+/* ====== BUTTONS ====== */
+const submitBtn = document.getElementById('submitBtn');
+const resetBtn = document.getElementById('resetBtn');
+const toggleAnsBtn = document.getElementById('toggleAnsBtn');
+const scoreCard = document.getElementById('scoreCard');
+const scoreText = document.getElementById('scoreText');
+
+let showAnswers = false;
+
+function grade() {
+  let score = 0;
+  QUESTIONS.forEach((item, idx) => {
+    const sel = document.querySelector(`input[name="q${idx}"]:checked`);
+    const expl = document.getElementById(`exp${idx}`);
+    // reset classes
+    expl.classList.remove('show');
+    const card = expl.parentElement;
+    card.classList.remove('ok','bad');
+    // show explanation anyway
+    expl.classList.add('show');
+
+    if(sel) {
+      const val = parseInt(sel.value,10);
+      if(val === item.correct) {
+        score++;
+        card.classList.add('ok');
+      } else {
+        card.classList.add('bad');
+      }
+    } else {
+      // no selection => treat as wrong (still show explanation)
+      card.classList.add('bad');
+    }
+  });
+
+  scoreCard.style.display = 'block';
+  scoreText.textContent = `Bạn trả lời đúng: ${score} / ${QUESTIONS.length}   （得点: ${score}/${QUESTIONS.length}）`;
+  return score;
+}
+
+submitBtn.addEventListener('click', () => { grade(); });
+
+resetBtn.addEventListener('click', () => {
+  // clear radios
+  QUESTIONS.forEach((_, idx) => {
+    const sel = document.querySelectorAll(`input[name="q${idx}"]`);
+    sel.forEach(i => i.checked = false);
+    const expl = document.getElementById(`exp${idx}`);
+    if(expl){ expl.classList.remove('show'); expl.parentElement.classList.remove('ok','bad'); }
+  });
+  scoreCard.style.display = 'none';
+});
+
+toggleAnsBtn.addEventListener('click', () => {
+  showAnswers = !showAnswers;
+  QUESTIONS.forEach((item, idx) => {
+    const expl = document.getElementById(`exp${idx}`);
+    const card = expl.parentElement;
+    if(showAnswers) {
+      expl.classList.add('show');
+      // highlight correct option inside the card
+      const radios = card.querySelectorAll('input[type="radio"]');
+      radios.forEach(r => {
+        const label = r.parentElement;
+        if(parseInt(r.value,10) === item.correct) {
+          label.style.outline = "2px solid rgba(11,102,255,0.18)";
+        } else {
+          label.style.outline = "";
+        }
+      });
+    } else {
+      expl.classList.remove('show');
+      const radios = card.querySelectorAll('input[type="radio"]');
+      radios.forEach(r => r.parentElement.style.outline = "");
+    }
+  });
+  toggleAnsBtn.textContent = showAnswers ? 'Ẩn đáp án / 答えを隠す' : 'Hiện đáp án / 答えを表示';
+});
+
+/* Optional: save progress to localStorage (simple) */
+window.addEventListener('beforeunload', () => {
+  const answers = [];
+  QUESTIONS.forEach((_, idx) => {
+    const sel = document.querySelector(`input[name="q${idx}"]:checked`);
+    answers.push(sel ? sel.value : null);
+  });
+  localStorage.setItem('quiz_17_answers_v1', JSON.stringify(answers));
+});
+
+// restore
+(function restore(){
+  try{
+    const data = JSON.parse(localStorage.getItem('quiz_17_answers_v1') || "null");
+    if(Array.isArray(data)){
+      data.forEach((val, idx) => {
+        if(val !== null){
+          const el = document.querySelector(`input[name="q${idx}"][value="${val}"]`);
+          if(el) el.checked = true;
+        }
+      });
+    }
+  }catch(e){}
+})();
+</script>
+</body>
+</html>

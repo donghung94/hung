@@ -68,33 +68,26 @@
 
 
 
- document.addEventListener("DOMContentLoaded", () => {
-  function convertFurigana(container) {
-    if (!container) return;
+function convertFurigana(text) {
+  if (!text) return text;
 
-    const elements = container.querySelectorAll("*");
-    elements.forEach(el => {
-      if (el.children.length === 0) {
-        let html = el.innerHTML;
-
-        // Tìm mẫu: 漢字（かんじ） hoặc 漢字(かんじ)
-        html = html.replace(/([一-龯々〆ヵヶ]+)[（(]([^）)]+)[）)]/g,
-          `<ruby>$1<rt>$2</rt></ruby>`
-        );
-
-        el.innerHTML = html;
-      }
-    });
-  }
-
-  // Áp dụng cho câu hỏi
-  convertFurigana(document.querySelector(".question-text"));
-
-  // Áp dụng cho toàn bộ đáp án
-  document.querySelectorAll(".answer-item, .answer-text, .option").forEach(ans => {
-    convertFurigana(ans);
+  return text.replace(/([一-龯々〆ヶ]+)（([^）]+)）/g, (match, kanji, kana) => {
+    return `<ruby>${kanji}<rt>${kana}</rt></ruby>`;
   });
-});
+}
+
+// Áp dụng cho tất cả câu hỏi, đáp án, giải thích sau khi render
+function applyFuriganaToPage() {
+  document.querySelectorAll(".question-text, .option-text, .explain-text").forEach(el => {
+    el.innerHTML = convertFurigana(el.innerHTML);
+  });
+}
+
+// Chờ DOM load xong hoặc sau khi bạn render câu hỏi
+document.addEventListener("DOMContentLoaded", applyFuriganaToPage);
+
+// Nếu bạn render động từng câu → gọi lại hàm
+window.applyFuriganaToPage = applyFuriganaToPage;
 
 
 

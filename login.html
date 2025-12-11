@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Đăng nhập – KOSEI Quiz App</title>
+  <link rel="icon" href="icon-192.png" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+</head>
+
+<body style="background:#f8fafc;font-family:sans-serif;display:flex;justify-content:center;align-items:center;height:100vh;margin:0;">
+
+  <div style="background:#fff;padding:26px 22px;border-radius:12px;box-shadow:0 10px 30px rgba(2,6,23,.12);text-align:center;width:320px;">
+    <img src="icon-192.png" alt="Logo" style="width:80px;border-radius:12px;margin-bottom:10px;" />
+    <h2 style="margin:6px 0 12px;font-size:18px">🔒 Đăng nhập hệ thống</h2>
+
+    <input type="email" id="email" placeholder="Email"
+      style="width:100%;padding:10px 12px;margin:8px 0;border:1px solid #e5e7eb;border-radius:8px;outline:none" />
+    <input type="password" id="password" placeholder="Mật khẩu"
+      style="width:100%;padding:10px 12px;margin:8px 0;border:1px solid #e5e7eb;border-radius:8px;outline:none" />
+
+    <button id="loginBtn"
+      style="background:#1e40af;color:#fff;border:none;padding:10px 15px;width:100%;border-radius:8px;cursor:pointer;font-weight:600;margin-top:6px;">
+      Đăng nhập
+    </button>
+
+    <p id="message" style="margin-top:12px;font-size:14px;min-height:18px;"></p>
+
+    <div style="margin-top:8px;font-size:12px;color:#6b7280;">
+      (Nếu thấy lỗi “đang đăng nhập ở thiết bị khác”, hãy đăng xuất ở thiết bị cũ trước.)
+    </div>
+  </div>
+
+  <script type="module">
+    import { auth, loginUser } from "./firebase.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+    const $ = (s)=>document.querySelector(s);
+    const emailEl = $("#email");
+    const passEl  = $("#password");
+    const btn     = $("#loginBtn");
+    const msg     = $("#message");
+
+    // ✅ Nếu đã có phiên hợp lệ → tự vào app
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        msg.textContent = "🔄 Đã có phiên đăng nhập, đang chuyển...";
+        msg.style.color = "green";
+        setTimeout(()=> location.href = "index.html", 300);
+      }
+    });
+
+    // 🔐 Đăng nhập
+    btn.addEventListener("click", async () => {
+      const email = emailEl.value.trim();
+      const password = passEl.value.trim();
+
+      if (!email || !password) {
+        msg.textContent = "⚠️ Vui lòng nhập đủ email và mật khẩu.";
+        msg.style.color = "red";
+        return;
+      }
+
+      try {
+        btn.disabled = true;
+        btn.textContent = "⏳ Đang kiểm tra...";
+        msg.textContent = "";
+
+        await loginUser(email, password);
+        // Nếu thành công → firebase.js sẽ tự redirect
+      } catch (err) {
+        msg.textContent = "❌ " + (err?.message || "Đăng nhập thất bại");
+        msg.style.color = "red";
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Đăng nhập";
+      }
+    });
+
+    // Nhấn Enter để đăng nhập
+    [emailEl, passEl].forEach(el => {
+      el.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") btn.click();
+      });
+    });
+  </script>
+</body>
+</html>

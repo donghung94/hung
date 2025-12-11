@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quiz KOSEI APP luyện thi</title>
+  <link rel="icon" href="icon-192.png">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="firebase.js"></script>
+</head>
+
+<body class="mono">
+  <!-- 🔐 Kiểm tra đăng nhập -->
+  <script type="module">
+    import { auth } from "./firebase.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    onAuthStateChanged(auth, (user) => {
+      if (!user) location.href = "login.html";
+    });
+  </script>
+
+  <header class="header">
+    <div class="brand small">
+      <img src="icon-192.png" alt="H" class="logo">
+      <div class="titles">
+        <div class="brand-name">KOSEI Quiz APP</div>
+        <div class="subtitle">Trung Tâm Nhật Ngữ KOSEI</div>
+      </div>
+    </div>
+    <div class="hud">
+      <span id="timer" class="timer">60:00</span>
+      <button id="submitBtn" class="btn">Nộp bài</button>
+      <a href="index.html" class="btn ghost">Trang chủ</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <div id="quiz" class="card"></div>
+    <div id="result" class="card" style="display:none"></div>
+  </main>
+
+  <button id="redoWrong" class="floating">Làm lại những câu sai</button>
+
+  <footer class="footer">© 2025 • Quiz APP Trung tâm KOSEI</footer>
+
+  <!-- 🧰 Đề lý thuyết -->
+  <script src="questions.js"></script>
+  <script src="questions2.js"></script>
+  <script src="questions3.js"></script>
+  <script src="questions4.js"></script>
+  <script src="questions5.js"></script>
+  <script src="questions6.js"></script>
+
+  <!-- 🧰 Đề thực hành nhóm 1 -->
+  <script src="practice1_g1.js"></script>
+  <script src="practice2_g1.js"></script>
+  <script src="practice3_g1.js"></script>
+  <script src="practice4_g1.js"></script>
+
+  <!-- 🧰 Đề thực hành nhóm 2 -->
+  <script src="practice1.js"></script>
+  <script src="practice2.js"></script>
+  <script src="practice3.js"></script>
+  <script src="practice4.js"></script>
+
+  <!-- 🧮 Tạo đề ngẫu nhiên -->
+  <script src="exam_random.js"></script>          <!-- random đề lý thuyết -->
+  <script src="practice_random_g1.js"></script>   <!-- random đề thực hành -->
+  <script src="practice_random_g2.js"></script>   <!-- random đề thực hành -->
+
+
+  <!-- ⚙️ Code xử lý chính -->
+  <script src="exam.js"></script>
+
+
+  <!-- 💅 Style nhỏ -->
+  <style>
+    .hud {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn.ghost {
+      background: #f3f4f6;
+      color: #1e40af;
+      font-weight: bold;
+      border: 1px solid #1e40af;
+    }
+    .btn.ghost:hover { background: #e0e7ff; }
+  </style>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin – Duyệt đăng nhập</title>
+  <script type="module">
+    import { db } from "./firebase.js";
+    import { collection, getDocs, updateDoc, doc } 
+      from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    async function loadRequests(){
+      const list = document.getElementById("list");
+      list.innerHTML = "<li>⏳ Đang tải...</li>";
+      const snap = await getDocs(collection(db, "login_requests"));
+      list.innerHTML = "";
+      snap.forEach(d=>{
+        const data = d.data();
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <div style='margin-bottom:8px'>
+            <b>${data.email}</b><br>
+            <small>${data.device}</small><br>
+            <span>Trạng thái: <b>${data.status}</b></span><br>
+            <button onclick="approve('${d.id}')">✅ Duyệt</button>
+            <button onclick="reject('${d.id}')">❌ Từ chối</button>
+          </div><hr>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    window.approve = async (id)=>{
+      await updateDoc(doc(db,"login_requests",id),{status:"approved"});
+      alert("✅ Đã duyệt!");
+      loadRequests();
+    };
+    window.reject = async (id)=>{
+      await updateDoc(doc(db,"login_requests",id),{status:"rejected"});
+      alert("❌ Đã từ chối!");
+      loadRequests();
+    };
+
+    loadRequests();
+  </script>
+</head>
+
+<body style="font-family:sans-serif;padding:20px;">
+  <h2>🛠️ Quản trị – Duyệt yêu cầu đăng nhập</h2>
+  <ul id="list" style="list-style:none;padding:0;"></ul>
+</body>
+</html>

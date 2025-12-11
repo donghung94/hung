@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quiz APP KOSEI CENTER </title>
+  <link rel="icon" href="icon-192.png">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="stylesheet" href="style.css">
+
+  <!-- 🚀 Ép tải sẵn 6 file đề + 2 đề thực hành -->
+  <script>
+    const quizFiles = [
+      "questions.js","questions2.js","questions3.js",
+      "questions4.js","questions5.js","questions6.js",
+      "practice1.js","practice2.js","practice3.js","practice4.js","practice1_g1.js","practice2_g1.js","practice3_g1.js","practice4_g1.js"
+    ];
+    quizFiles.forEach(f => fetch(f).catch(()=>{}));
+  </script>
+
+  <script type="module" src="firebase.js"></script>
+</head>
+
+<body class="mono">
+  <!-- 🔐 Kiểm tra đăng nhập -->
+  <script type="module">
+    import { auth, logout } from "./firebase.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+    // ✅ Nếu chưa đăng nhập thì quay về login
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        console.warn("⚠️ Chưa đăng nhập, quay về login...");
+        location.href = "login.html";
+      } else {
+        console.log("✅ Đã đăng nhập:", user.email);
+      }
+    });
+
+    window.logout = logout;
+  </script>
+
+<header class="header">
+  <div class="brand">
+    <img src="icon-192.png" alt="H" class="logo">
+    <div class="titles">
+      <div class="brand-name">Quiz APP KOSEI</div>
+      <div class="subtitle">Trung Tâm Nhật Ngữ KOSEI đồng hành và phát triển</div>
+    </div>
+  </div>
+  
+</header>
+
+<!-- ============================
+     🎥 VIDEO GIẢNG DẠY
+============================ -->
+<div class="video-section">
+  <h3>🎥 Video giải đề lý thuyết chung</h3>
+  <div class="video-link">
+    <a href="https://drive.google.com/file/d/1pl9RlHkuC-D0YzX4zTw41aE-9_p6ZaJ1/preview" 
+       target="_blank" rel="noopener noreferrer"
+       class="video-btn">▶️ Xem video</a>
+  </div>
+</div>
+
+<div class="video-section">
+  <h3>🎥 Video giải đề lý thuyết chung</h3>
+  <div class="video-link">
+    <a href="https://drive.google.com/file/d/1eTkqleEcCfyMb8GNI7voh6p9hdJwSqoO/preview" 
+       target="_blank" rel="noopener noreferrer"
+       class="video-btn">▶️ Xem video</a>
+  </div>
+</div>
+
+  <div class="video-section">
+  <h3>🎥 Video giải đề thực hành nhóm 1</h3>
+  <div class="video-link">
+    <a href="https://drive.google.com/file/d/1h8wyAfDmRlrgixBKTIgVB32bR2kPtjcA/preview" 
+       target="_blank" rel="noopener noreferrer"
+       class="video-btn">▶️ Xem video</a>
+  </div>
+</div>
+  
+<div class="video-section">
+  <h3>🎥 Video giải đề thực hành nhóm 2</h3>
+  <div class="video-link">
+    <a href="https://drive.google.com/file/d/1VX8KswXQhLq3NdRGc9YPmVaXXuWfa9-_/preview" 
+       target="_blank" rel="noopener noreferrer"
+       class="video-btn">▶️ Xem video</a>
+  </div>
+</div>
+
+<!-- ============================
+     📘 DANH SÁCH ĐỀ THI
+============================ -->
+<main class="container">
+  <div class="card">
+    <h2>Chọn đề thi lý thuyết chung</h2>
+    <ul id="exam-list" class="exam-list">
+      <li><a href="exam.html?set=1">Lý thuyết chung – (問1〜問30)</a></li>
+      <li><a href="exam.html?set=2">Lý thuyết chung – (問31〜問60)</a></li>
+      <li><a href="exam.html?set=3">Lý thuyết chung – (問61〜問90)</a></li>
+      <li><a href="exam.html?set=4">Lý thuyết chung – (問91〜問120)</a></li>
+      <li><a href="exam.html?set=5">Lý thuyết chung – (問121〜問150)</a></li>
+      <li><a href="exam.html?set=6">Lý thuyết chung – (問151〜問180)</a></li>
+      <li><a href="exam.html?set=randomExam" style="font-weight:bold;color:#1e40af;">
+        🎲 Đề thi thử lý thuyết chung đảo ngẫu nhiên
+      </a></li>
+    </ul>
+  </div>
+ <!-- ========================= -->
+  <!-- ✅ KHU ĐỀ THỰC HÀNH NHÓM 1 -->
+  <!-- ========================= -->
+  <div class="card">
+    <h2>🧰 Đề thực hành nhóm 1</h2>
+    <ul class="exam-list">
+      <li><a href="exam.html?practice=g1_1">Thực hành nhóm 1 – (問1〜問30)</a></li>
+      <li><a href="exam.html?practice=g2_1">Thực hành nhóm 1 – (問31〜問60)</a></li>
+      <li><a href="exam.html?practice=g3_1">Thực hành nhóm 1 – (問61〜問90)</a></li>
+      <li><a href="exam.html?practice=g4_1">Thực hành nhóm 1 – (問91〜問132)</a></li>
+      <li><a href="exam.html?practice=g1_random" style="font-weight:bold;color:#1e40af;">🎲 Đề thi thử đảo ngẫu nhiên 40 câu thực hành nhóm 1</a></li>
+    </ul>
+  </div>
+  <!-- ========================= -->
+  <!-- ✅ KHU ĐỀ THỰC HÀNH NHÓM 2 -->
+  <!-- ========================= -->
+  <div class="card">
+    <h2>🧰 Đề thực hành nhóm 2</h2>
+    <ul class="exam-list">
+      <li><a href="exam.html?practice=g2_1">Thực hành nhóm 2 – (問1〜問30)</a></li>
+      <li><a href="exam.html?practice=g2_2">Thực hành nhóm 2 – (問31〜問60)</a></li>
+      <li><a href="exam.html?practice=g2_3">Thực hành nhóm 2 – (問61〜問90)</a></li>
+      <li><a href="exam.html?practice=g2_4">Thực hành nhóm 2 – (問91〜問130)</a></li>
+       <li><a href="exam.html?practice=g2_random" style="font-weight:bold;color:#1e40af;">🎲 Đề thi thử đảo ngẫu nhiên 40 câu thực hành nhóm 2</a></li>
+    </ul>
+  </div>
+</main>
+
+<footer class="footer">© 2025 • Quiz APP KOSEI CENTER</footer>
+
+<!-- 💅 Style bổ sung -->
+<style>
+.logout-btn {
+  background:#ef4444;
+  color:white;
+  border:none;
+  padding:6px 12px;
+  border-radius:6px;
+  font-weight:bold;
+  cursor:pointer;
+}
+.logout-btn:hover { background:#dc2626; }
+
+.video-section {
+  background: #fff;
+  margin: 16px;
+  padding: 16px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.video-btn {
+  display: inline-block;
+  background: #1e40af;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: 0.2s;
+}
+.video-btn:hover { background: #2563eb; }
+
+.exam-list li { list-style:none; margin:8px 0; }
+.exam-list a {
+  display:block;
+  background:#f8fafc;
+  border:1px solid #cbd5e1;
+  padding:10px 14px;
+  border-radius:8px;
+  color:#1e293b;
+  text-decoration:none;
+  transition:.2s;
+}
+.exam-list a:hover { background:#e0e7ff; color:#1e40af; }
+</style>
+
+</body>
+</html>

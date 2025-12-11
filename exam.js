@@ -86,6 +86,20 @@
   });
   // ========================================================
 
+document.addEventListener("DOMContentLoaded", () => {
+    const areas = document.querySelectorAll(".question, .option, .explain");
+
+    areas.forEach(el => {
+        let html = el.innerHTML;
+
+        // Tìm: Kanji + (furigana)
+        html = html.replace(/([\u4E00-\u9FAF]+)\s*\((.*?)\)/g, (m, kanji, kana) => {
+            return `<ruby>${kanji}<rt>${kana}</rt></ruby>`;
+        });
+
+        el.innerHTML = html;
+    });
+});
 
 
   // =============== RENDER ===============

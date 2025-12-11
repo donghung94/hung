@@ -68,38 +68,34 @@
 
 
 
-  // ========================================================
-  //          ⭐⭐⭐ TỰ ĐỘNG CHUYỂN FURIGANA ⭐⭐⭐
-  // ========================================================
-  function convertFurigana(text) {
-    if (!text) return text;
-    return text.replace(/([一-龯々〆ヵヶ]+)\s*（([ぁ-んァ-ン]+)）/g,
-      (match, kanji, hira) => `<ruby>${kanji}<rt>${hira}</rt></ruby>`);
-  }
+ document.addEventListener("DOMContentLoaded", () => {
+  function convertFurigana(container) {
+    if (!container) return;
 
-  // 👉 Chạy chuyển đổi FURIGANA CHO TẤT CẢ CÂU HỎI trước khi render
-  questions.forEach(q => {
-    if (q.q) q.q = convertFurigana(q.q);
-    if (q.hira) q.hira = convertFurigana(q.hira);
-    if (q.vi) q.vi = convertFurigana(q.vi);
-    if (q.explain) q.explain = convertFurigana(q.explain);
-  });
-  // ========================================================
-
-document.addEventListener("DOMContentLoaded", () => {
-    const areas = document.querySelectorAll(".question, .option, .explain");
-
-    areas.forEach(el => {
+    const elements = container.querySelectorAll("*");
+    elements.forEach(el => {
+      if (el.children.length === 0) {
         let html = el.innerHTML;
 
-        // Tìm: Kanji + (furigana)
-        html = html.replace(/([\u4E00-\u9FAF]+)\s*\((.*?)\)/g, (m, kanji, kana) => {
-            return `<ruby>${kanji}<rt>${kana}</rt></ruby>`;
-        });
+        // Tìm mẫu: 漢字（かんじ） hoặc 漢字(かんじ)
+        html = html.replace(/([一-龯々〆ヵヶ]+)[（(]([^）)]+)[）)]/g,
+          `<ruby>$1<rt>$2</rt></ruby>`
+        );
 
         el.innerHTML = html;
+      }
     });
+  }
+
+  // Áp dụng cho câu hỏi
+  convertFurigana(document.querySelector(".question-text"));
+
+  // Áp dụng cho toàn bộ đáp án
+  document.querySelectorAll(".answer-item, .answer-text, .option").forEach(ans => {
+    convertFurigana(ans);
+  });
 });
+
 
 
   // =============== RENDER ===============

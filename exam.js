@@ -32,7 +32,7 @@
   const redoBtn = $("#redoWrong");
   const timerEl = $("#timer");
 
-  // ================== TIMER ===============  
+  // ---------------- TIMER ----------------
   let timeLeft = 3600;
   const tick = () => {
     const m = Math.floor(timeLeft / 60);
@@ -44,10 +44,10 @@
   };
   tick();
 
-  // ================== TRỘN ===============
+  // ---------------- SHUFFLE ----------------
   function shuffle(arr) {
-    for (let i=arr.length-1; i>0; i--) {
-      const j = Math.floor(Math.random() * (i+1));
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
       [arr[i], arr[j]] = [arr[j], arr[i]];
     }
     return arr;
@@ -55,16 +55,17 @@
 
   const questions = DATA.map(q => {
     const correctIndex = q.answer;
-    const opts = q.options.map((t,i)=>({text:t, correct:(i === correctIndex)}));
+    const opts = q.options.map((t, i) => ({ text: t, correct: (i === correctIndex) }));
     shuffle(opts);
     return { ...q, options: opts };
   });
+
   shuffle(questions);
 
   let cur = 0;
   const user = new Array(questions.length).fill(null);
 
-  // ================== FURIGANA AUTO ==================
+  // ================== FURIGANA ==================
   function convertFurigana(text) {
     if (!text) return text;
     return text.replace(/([一-龯々〆ヶ]+)（([^）]+)）/g,
@@ -72,73 +73,70 @@
   }
 
   function applyFuriganaToPage() {
-    document.querySelectorAll(".q-text, .opt, .explain-box, .answer-line").forEach(el => {
+    document.querySelectorAll(".q-text, .opt, .answer-line, .explain-box").forEach(el => {
       el.innerHTML = convertFurigana(el.innerHTML);
     });
   }
 
-  window.applyFuriganaToPage = applyFuriganaToPage;
-
-  // ================ RENDER ==================
+  // ================== RENDER ================
   function render() {
+
     if (!questions.length) {
-      quizEl.innerHTML = '<p>Không có dữ liệu câu hỏi.</p>';
+      quizEl.innerHTML = "<p>Không có dữ liệu câu hỏi.</p>";
       return;
     }
 
     const q = questions[cur];
     const hasAnswered = user[cur] !== null;
 
-    const header = `<div class="q-head"><div class="q-index">Câu ${cur+1}/${questions.length}</div></div>`;
-    const body = `
+    const html = `
+      <div class="q-head"><div class="q-index">Câu ${cur+1}/${questions.length}</div></div>
+
       <div class="q-text">${q.q}</div>
-      ${q.hira ? `<div class="hira">${q.hira}</div>` : ''}
-      ${
-        q.img
-        ? `<div class="q-img">
-             <img src="${q.img}" onerror="this.style.display='none';"
-              style="max-width:100%;border:1px solid #ccc;border-radius:8px;margin:8px 0;">
-           </div>`
-        : ''
-      }
+      ${q.hira ? `<div class="hira">${q.hira}</div>` : ""}
+      ${q.img ? `<div class="q-img"><img src="${q.img}" style="max-width:100%;border:1px solid #ccc;border-radius:8px;margin:8px 0;"></div>`: ""}
 
       <div class="options">
         ${q.options.map((op,i)=>{
-          let cls='opt', mark='';
+          let cls="opt", mark="";
           if(hasAnswered){
-            if(op.correct){ cls+=' correct'; mark='✅'; }
-            else if(user[cur]===i){ cls+=' incorrect'; mark='❌'; }
+            if(op.correct){ cls+=" correct"; mark="✅"; }
+            else if(user[cur]===i){ cls+=" incorrect"; mark="❌"; }
           }
           return `<div class="${cls}" data-idx="${i}">${op.text} <span class="mark">${mark}</span></div>`;
-        }).join('')}
+        }).join("")}
       </div>
 
       <div class="nav">
-        <button class="btn" id="backBtn" ${cur===0?'disabled':''}>⬅️ Quay lại</button>
+        <button class="btn" id="backBtn" ${cur===0?"disabled":""}>⬅️ Quay lại</button>
         <button class="btn" id="explainBtn">📘 Giải thích</button>
-        <button class="btn" id="nextBtn" ${cur===questions.length-1?'disabled':''}>➡️ Tiếp theo</button>
+        <button class="btn" id="nextBtn" ${cur===questions.length-1?"disabled":""}>➡️ Tiếp theo</button>
       </div>
 
-      <div id="explainBox" class="explain-box" style="display:${hasAnswered?'block':'none'};">
-        ${q.vi ? `<div><b>Dịch:</b> ${q.vi}</div>` : ''}
-        ${q.explain ? `<div><b>📘 Giải thích:</b> ${q.explain}</div>` : ''}
-        ${q.tip ? `<div class="tip">${q.tip}</div>` : ''}
+      <div id="explainBox" class="explain-box" style="display:${hasAnswered?"block":"none"};">
+        ${q.vi ? `<div><b>Dịch:</b> ${q.vi}</div>` : ""}
+        ${q.explain ? `<div><b>📘 Giải thích:</b> ${q.explain}</div>` : ""}
+        ${q.tip ? `<div class="tip">${q.tip}</div>` : ""}
       </div>
     `;
 
-    quizEl.innerHTML = header + body;
+    quizEl.innerHTML = html;
 
-    // Gắn sự kiện chọn đáp án
-    const optionEls = quizEl.querySelectorAll(".opt");
-    optionEls.forEach(el => {
+    // 🔥 ÁP DỤNG FURIGANA NGAY SAU KHI RENDER
+    applyFuriganaToPage();
+
+    // --- gắn sự kiện ---
+    quizEl.querySelectorAll(".opt").forEach(el => {
       el.addEventListener("click", () => {
         if (user[cur] !== null) return;
+
         const idx = parseInt(el.dataset.idx);
         user[cur] = idx;
 
-        optionEls.forEach((optEl, j) => {
+        // đổi màu đáp án
+        quizEl.querySelectorAll(".opt").forEach((optEl, j) => {
           const mark = optEl.querySelector(".mark");
-          if (q.options[j].correct) {
+          if (questions[cur].options[j].correct) {
             optEl.classList.add("correct");
             mark.textContent = "✅";
           } else if (j === idx) {
@@ -154,20 +152,18 @@
     });
 
     $("#backBtn").onclick = () => { if (cur > 0) { cur--; render(); } };
-    $("#nextBtn").onclick = () => { if (user[cur] !== null && cur < questions.length-1) { cur++; render(); } };
+    $("#nextBtn").onclick = () => { if (user[cur] !== null && cur < questions.length - 1) { cur++; render(); } };
     $("#explainBtn").onclick = () => {
       const box = $("#explainBox");
       box.style.display = (box.style.display === "none") ? "block" : "none";
       applyFuriganaToPage();
     };
-
-    applyFuriganaToPage();
   }
 
   render();
   submitBtn.onclick = submitQuiz;
 
-  // ================= SUBMIT ==================
+  // ================== SUBMIT ==================
   function submitQuiz() {
     let correct = 0;
     const wrongs = [];
@@ -177,27 +173,29 @@
       const right = q.options.find(o=>o.correct);
       const isRight = picked!==null && q.options[picked] && q.options[picked].correct;
 
-      if (isRight) { correct++; return ""; }
+      if(isRight){ correct++; return ""; }
       wrongs.push(q);
 
       return `
         <div class="result-item">
           <div class="q-text">${q.q}</div>
-          ${q.hira ? `<div class="hira">${q.hira}</div>` : ''}
-          ${q.img?`<div class="q-img"><img src="${q.img}" style="max-width:100%;border:1px solid #ccc;border-radius:8px;margin:8px 0;"></div>`:''}
-          <div class="answer-line">❌ <b>Bạn chọn:</b> ${picked!==null ? q.options[picked].text : '(chưa chọn)'}</div>
+          ${q.hira?`<div class="hira">${q.hira}</div>`:""}
+          ${q.img?`<div class="q-img"><img src="${q.img}" style="max-width:100%;border:1px solid #ccc;border-radius:8px;margin:8px 0;"></div>`:""}
+          <div class="answer-line">❌ <b>Bạn chọn:</b> ${picked!==null?q.options[picked].text:"(chưa chọn)"}</div>
           <div class="answer-line">✅ <b>Đáp án đúng:</b> ${right.text}</div>
-          ${q.vi?`<div><b>Dịch:</b> ${q.vi}</div>`:''}
-          ${q.explain?`<div class="explain-box"><b>📘 Giải thích:</b> ${q.explain}</div>`:''}
-          ${q.tip?`<div class="tip">${q.tip}</div>`:''}
-        </div>`;
+          ${q.vi?`<div><b>Dịch:</b> ${q.vi}</div>`:""}
+          ${q.explain?`<div class="explain-box"><b>📘 Giải thích:</b> ${q.explain}</div>`:""}
+          ${q.tip?`<div class="tip">${q.tip}</div>`:""}
+        </div>
+      `;
     }).join("");
 
-    quizEl.style.display = "none";
-    resEl.style.display = "block";
+    quizEl.style.display="none";
+    resEl.style.display="block";
+
     resEl.innerHTML = `
       <div class="result-title">✅ Bạn làm đúng ${correct}/${questions.length}</div>
-      ${wrongs.length ? `<div><b>Bạn sai các câu sau:</b></div>${html}` : `<div>🎉 Bạn làm đúng tất cả!</div>`}
+      ${wrongs.length?`<div><b>Bạn sai các câu sau:</b></div>${html}`:`<div>🎉 Bạn đúng hết!</div>`}
     `;
 
     applyFuriganaToPage();
@@ -206,23 +204,15 @@
     redoBtn.onclick = () => {
       shuffle(wrongs);
       questions.length = 0;
-      wrongs.forEach(q => questions.push(q));
+      wrongs.forEach(q=>questions.push(q));
       cur = 0;
       user.length = questions.length;
       user.fill(null);
-      quizEl.style.display = "block";
-      resEl.style.display = "none";
-      redoBtn.style.display = "none";
+      quizEl.style.display="block";
+      resEl.style.display="none";
+      redoBtn.style.display="none";
       render();
     };
   }
 
-  redoBtn.style.position = "fixed";
-  redoBtn.style.bottom = "20px";
-  redoBtn.style.right = "20px";
-  redoBtn.style.background = "#2563eb";
-  redoBtn.style.color = "#fff";
-  redoBtn.style.border = "none";
-  redoBtn.style.padding = "10px 16px";
-  redoBtn.style.borderRadius = "8px";
 })();

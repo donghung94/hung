@@ -66,11 +66,15 @@
   const user = new Array(questions.length).fill(null);
 
   // ================== FURIGANA ==================
-  function convertFurigana(text) {
-    if (!text) return text;
-    return text.replace(/([一-龯々〆ヶ]+)（([^）]+)）/g,
-      (m, kanji, kana) => `<ruby>${kanji}<rt>${kana}</rt></ruby>`);
-  }
+ function convertFurigana(text) {
+  if (!text) return text;
+
+  return text.replace(
+    /([一-龯々〆ヶ]+)\s*[（(]([^）)]+)[）)]/g,
+    (m, kanji, kana) => `<ruby>${kanji}<rt>${kana}</rt></ruby>`
+  );
+}
+
 
   function applyFuriganaToPage() {
     document.querySelectorAll(".q-text, .opt, .answer-line, .explain-box").forEach(el => {

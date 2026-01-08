@@ -65,7 +65,7 @@ body.mono{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-a
 .answer-line{margin:6px 0}
 .selected.correct{color:var(--ok);font-weight:700}
 .selected.incorrect{color:var(--bad);font-weight:700}
-.explain{color:#111;margin-top:6px}
+.explain{color:#111;margin-top:6px; white-space: pre-line;}
 
 .floating{position:fixed;right:16px;bottom:16px;background:var(--blue);color:#fff;border:none;border-radius:12px;padding:12px 16px;cursor:pointer;display:none}
 

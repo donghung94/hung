@@ -1,6 +1,20 @@
 // questions.js — Đề 1 (問1〜問8)
 window.QUESTION_SETS = window.QUESTION_SETS || {};
 window.QUESTION_SETS["1"] = [
+    {
+    "id": 88,
+    "q": "問88. 「ほうれんそう」について、不適切（ふてきせつ）なものを選（えら）べ.",
+    "options": [
+      "現場（げんば）でやってはいけない服装（ふくそう）のこと",
+      "「ほうれんそう」は、報告（ほうこく）・連絡（れんらく）・相談（そうだん）を組み合わせ（くみあわせ）た言葉（ことば）",
+      "スムーズに作業（さぎょう）を進める（すすめる）ためにはコミュニケーション",
+      "仕事（しごと）に関する（かんする）情報（じょうほう）や、自分（じぶん）のスケジュールなどを先輩（せんぱい）や職長（しょくちょう）に伝える（つたえる）こと"
+    ],
+    "answer": 0,
+    "vi": "Hãy chọn phương án KHÔNG chính xác khi nói về quy tắc 'Hourensou'.",
+    "explain": "ほうれんそう là quy tắc giao tiếp cơ bản trong công việc tại Nhật, viết tắt của 報告（ほうこく） (Báo cáo), 連絡（れんらく） (Liên lạc), và 相談（そうだん） (Thảo luận/Bàn bạc). Nó không liên quan đến 服装（ふくそう） (Trang phục).\n\nTừ vựng:\n報告（ほうこく） - Báo cáo\n連絡（れんらく） - Liên lạc\n相談（そうだん） - Thảo luận / Bàn bạc\n不適切（ふてきせつ） - Không thích hợp / Không chính xác\n服装（ふくそう） - Trang phục",
+    "tip": "💡 Ghi nhớ: ほうれんそう（Báo liên tương）là quy tắc vàng trong giao tiếp công việc, không phải là quy định về 服装（ふくそう）（Phục trang - Quần áo）."
+  },
 {
   id: 1,
   q: "問1 スプリンクラーは、なんの工事（こうじ）か。",
